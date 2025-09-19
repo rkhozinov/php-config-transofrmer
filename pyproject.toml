@@ -1,0 +1,35 @@
+[project]
+name = "php-config-transformer"
+version = "1.0.0"
+description = "A utility to transform PHP define() statements to use environment variables"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = []
+authors = [
+    {name = "Ruslan Khozinov", email = "ruslan.khozinov@gmail.com"},
+]
+keywords = ["php", "configuration", "environment-variables", "automation", "transformer"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Code Generators",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Systems Administration",
+    "Topic :: Utilities",
+]
+
+[project.urls]
+Homepage = "https://github.com/rkhozinov/php-config-transformer"
+Repository = "https://github.com/rkhozinov/php-config-transformer"
+Issues = "https://github.com/rkhozinov/php-config-transformer/issues"
+
+[project.scripts]
+php-config-transformer = "main:main"
