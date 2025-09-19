@@ -11,7 +11,7 @@ import re
 import shutil
 import sys
 from pathlib import Path
-from typing import List, Tuple, Optional, Dict
+from typing import List, Tuple
 
 
 class EnvTransformer:
@@ -20,11 +20,10 @@ class EnvTransformer:
     def __init__(self):
         # Pattern to match define() statements with various quote styles and spacing
         self.define_pattern = re.compile(
-            r'define\s*\(\s*([\'"])(.*?)\1\s*,\s*(.*?)\s*\)\s*;',
-            re.MULTILINE
+            r'define\s*\(\s*([\'"])(.*?)\1\s*,\s*(.*?)\s*\)\s*;', re.MULTILINE
         )
         # Pattern to check if already using getenv
-        self.getenv_pattern = re.compile(r'getenv\s*\(')
+        self.getenv_pattern = re.compile(r"getenv\s*\(")
 
     def transform_define_line(self, line: str) -> Tuple[str, bool]:
         """
@@ -32,12 +31,12 @@ class EnvTransformer:
         Returns: (transformed_line, was_changed)
         """
         # Preserve original line ending
-        line_ending = ''
-        if line.endswith('\r\n'):
-            line_ending = '\r\n'
+        line_ending = ""
+        if line.endswith("\r\n"):
+            line_ending = "\r\n"
             line_content = line[:-2]
-        elif line.endswith('\n'):
-            line_ending = '\n'
+        elif line.endswith("\n"):
+            line_ending = "\n"
             line_content = line[:-1]
         else:
             line_content = line
@@ -56,7 +55,7 @@ class EnvTransformer:
         const_value = match.group(3).strip()
 
         # Skip if the value is already a getenv() call
-        if const_value.startswith('getenv('):
+        if const_value.startswith("getenv("):
             return line, False
 
         # Transform to use getenv() with current value as default
@@ -74,7 +73,7 @@ class EnvTransformer:
         if not path.exists():
             raise FileNotFoundError(f"File not found: {file_path}")
 
-        with open(path, 'r', encoding='utf-8') as f:
+        with open(path, "r", encoding="utf-8") as f:
             lines = f.readlines()
 
         changes = []
@@ -82,11 +81,13 @@ class EnvTransformer:
         for line_num, line in enumerate(lines, 1):
             transformed_line, was_changed = self.transform_define_line(line)
             if was_changed:
-                changes.append({
-                    'line_number': line_num,
-                    'original_line': line.rstrip(),
-                    'transformed_line': transformed_line.rstrip()
-                })
+                changes.append(
+                    {
+                        "line_number": line_num,
+                        "original_line": line.rstrip(),
+                        "transformed_line": transformed_line.rstrip(),
+                    }
+                )
 
         return changes
 
@@ -100,7 +101,7 @@ class EnvTransformer:
             raise FileNotFoundError(f"File not found: {file_path}")
 
         # Read file content
-        with open(path, 'r', encoding='utf-8') as f:
+        with open(path, "r", encoding="utf-8") as f:
             lines = f.readlines()
 
         changes = []
@@ -110,16 +111,18 @@ class EnvTransformer:
             transformed_line, was_changed = self.transform_define_line(line)
 
             if was_changed:
-                changes.append({
-                    'line_number': line_num,
-                    'original_line': line.rstrip(),
-                    'transformed_line': transformed_line.rstrip()
-                })
+                changes.append(
+                    {
+                        "line_number": line_num,
+                        "original_line": line.rstrip(),
+                        "transformed_line": transformed_line.rstrip(),
+                    }
+                )
 
             transformed_lines.append(transformed_line)
 
         # Write transformed content back to file
-        with open(path, 'w', encoding='utf-8') as f:
+        with open(path, "w", encoding="utf-8") as f:
             f.writelines(transformed_lines)
 
         return changes
@@ -130,17 +133,17 @@ class EnvTransformer:
         if not path.exists():
             raise FileNotFoundError(f"File not found: {file_path}")
 
-        with open(path, 'r', encoding='utf-8') as f:
+        with open(path, "r", encoding="utf-8") as f:
             content = f.read()
 
         total_defines = len(self.define_pattern.findall(content))
         getenv_defines = len(self.getenv_pattern.findall(content))
 
         return {
-            'total_defines': total_defines,
-            'getenv_defines': getenv_defines,
-            'plain_defines': total_defines - getenv_defines,
-            'transformable_defines': self._count_transformable_defines(content)
+            "total_defines": total_defines,
+            "getenv_defines": getenv_defines,
+            "plain_defines": total_defines - getenv_defines,
+            "transformable_defines": self._count_transformable_defines(content),
         }
 
     def _count_transformable_defines(self, content: str) -> int:
@@ -150,7 +153,7 @@ class EnvTransformer:
 
         for match in matches:
             const_value = match.group(3).strip()
-            if not const_value.startswith('getenv('):
+            if not const_value.startswith("getenv("):
                 transformable += 1
 
         return transformable
@@ -174,13 +177,24 @@ Examples:
 
   # Show statistics
   python main.py --stats src/
-        """
+        """,
     )
 
-    parser.add_argument('src_dir', nargs='?', default='src', help='Source directory (default: src)')
-    parser.add_argument('result_dir', nargs='?', default='result', help='Result directory (default: result)')
-    parser.add_argument('--preview', action='store_true', help='Preview changes without writing files')
-    parser.add_argument('--stats', action='store_true', help='Show statistics about defines')
+    parser.add_argument(
+        "src_dir", nargs="?", default="src", help="Source directory (default: src)"
+    )
+    parser.add_argument(
+        "result_dir",
+        nargs="?",
+        default="result",
+        help="Result directory (default: result)",
+    )
+    parser.add_argument(
+        "--preview", action="store_true", help="Preview changes without writing files"
+    )
+    parser.add_argument(
+        "--stats", action="store_true", help="Show statistics about defines"
+    )
 
     return parser
 
@@ -202,7 +216,7 @@ def preview_transformations(src_dir: str, result_dir: str) -> None:
         return
 
     print(f"Preview of transformations from {src_dir} to {result_dir}:")
-    print("=" * 60)
+    print(f"{'=' * 60}")
 
     total_changes = 0
     for file_path in sorted(config_files):
@@ -211,7 +225,9 @@ def preview_transformations(src_dir: str, result_dir: str) -> None:
             if changes:
                 print(f"\n{file_path.name}: {len(changes)} changes")
                 for change in changes[:3]:  # Show first 3 changes
-                    print(f"  Line {change['line_number']}: {change['transformed_line']}")
+                    print(
+                        f"  Line {change['line_number']}: {change['transformed_line']}"
+                    )
                 if len(changes) > 3:
                     print(f"  ... and {len(changes) - 3} more changes")
                 total_changes += len(changes)
@@ -238,7 +254,7 @@ def show_statistics(src_dir: str) -> None:
         return
 
     print(f"Statistics for {src_dir}:")
-    print("=" * 40)
+    print(f"{'=' * 40}")
 
     total_defines = 0
     total_getenv = 0
@@ -252,9 +268,9 @@ def show_statistics(src_dir: str) -> None:
             print(f"  Already using getenv(): {stats['getenv_defines']}")
             print(f"  Transformable: {stats['transformable_defines']}")
 
-            total_defines += stats['total_defines']
-            total_getenv += stats['getenv_defines']
-            total_transformable += stats['transformable_defines']
+            total_defines += stats["total_defines"]
+            total_getenv += stats["getenv_defines"]
+            total_transformable += stats["transformable_defines"]
         except Exception as e:
             print(f"\n{file_path.name}: error - {e}")
 
@@ -284,7 +300,7 @@ def transform_files(src_dir: str, result_dir: str) -> None:
         return
 
     print(f"Transforming files from {src_dir} to {result_dir}:")
-    print("=" * 50)
+    print(f"{'=' * 50}")
 
     total_files = 0
     total_changes = 0
@@ -331,5 +347,5 @@ def main():
         transform_files(args.src_dir, args.result_dir)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
